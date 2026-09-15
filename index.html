@@ -1,83 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Finko Intelligence</title>
-<style>
-  :root {
-    --bg: #faf9f6;
-    --ink: #1c1f1a;
-    --muted: #6b6f64;
-    --accent: #33473b;
-    --rule: #dedad2;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  <title>Finko Intelligence</title>
 
-  html, body {
-    height: 100%;
-  }
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6vw 6vw;
-  }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #faf9f6;
+      color: #1c1f1a;
+      padding: 60px;
+    }
 
-  main {
-    max-width: 620px;
-    width: 100%;
-  }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
 
-  h1 {
-    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
-    font-weight: 400;
-    font-size: clamp(2.4rem, 6vw, 3.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    color: var(--accent);
-  }
+    .subtitulo {
+      font-size: 20px;
+      margin-bottom: 40px;
+    }
 
-  p.lead {
-    margin-top: 1.4rem;
-    font-size: clamp(1.05rem, 2vw, 1.2rem);
-    line-height: 1.55;
-    color: var(--ink);
-    max-width: 34em;
-  }
+    .propiedad {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #dedad2;
+      border-radius: 10px;
+      max-width: 500px;
+      background: white;
+    }
 
-  hr {
-    border: none;
-    border-top: 1px solid var(--rule);
-    margin: 2.2rem 0;
-    width: 3rem;
-  }
+    .estado {
+      color: #555;
+    }
 
-  p.status {
-    font-size: 0.95rem;
-    color: var(--muted);
-  }
-
-  @media (max-width: 480px) {
-    body { padding: 10vw 7vw; }
-  }
-</style>
+    #mensaje {
+      margin-top: 20px;
+    }
+  </style>
 </head>
+
 <body>
-  <main>
-    <h1>Finko Intelligence</h1>
-    <p class="lead">Sistema inteligente para analizar el rendimiento de propiedades publicadas en Instagram.</p>
-    <hr>
-    <p class="status">Prueba inicial del frontend.</p>
-  </main>
+
+  <h1>Finko Intelligence</h1>
+
+  <p class="subtitulo">
+    Sistema inteligente para analizar el rendimiento de propiedades publicadas en Instagram.
+  </p>
+
+  <h2>Propiedades guardadas en Supabase</h2>
+
+  <div id="mensaje">Cargando...</div>
+
+  <div id="propiedades"></div>
+
+  <script>
+    const SUPABASE_URL = https://acugsylkebfyxnunbacn.supabase.co;
+    const SUPABASE_KEY = sb_publishable__931Y3PHR3tN1YkHMSPZGQ_bgX4AE7s;
+
+    const clienteSupabase = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    async function cargarPropiedades() {
+
+      const { data, error } = await clienteSupabase
+        .from("propiedades")
+        .select("*");
+
+      const mensaje = document.getElementById("mensaje");
+      const contenedor = document.getElementById("propiedades");
+
+      if (error) {
+        mensaje.textContent = "Error al cargar propiedades.";
+        console.error(error);
+        return;
+      }
+
+      mensaje.textContent = "";
+
+      data.forEach(propiedad => {
+
+        const tarjeta = document.createElement("div");
+
+        tarjeta.className = "propiedad";
+
+        tarjeta.innerHTML = `
+          <h3>${propiedad.nombre}</h3>
+          <p class="estado">Estado: ${propiedad.estado}</p>
+        `;
+
+        contenedor.appendChild(tarjeta);
+
+      });
+    }
+
+    cargarPropiedades();
+  </script>
+
 </body>
 </html>
